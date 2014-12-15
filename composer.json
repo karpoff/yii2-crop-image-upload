@@ -1,4 +1,3 @@
-
 {
   "name": "karpoff/yii2-crop-image-upload",
   "description": "Yii 2 Crop image upload widget",
@@ -6,10 +5,7 @@
   "license": "BSD-3-Clause",
   "type": "yii2-extension",
   "version": "0.0.1",
-  "keywords": [
-	"yii2",
-	"crop image"
-  ],
+  "keywords": ["yii2", "crop", "image", "upload"],
   "authors": [
 	{
 	  "name": "Anton Karpov",
