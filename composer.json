@@ -1,0 +1,29 @@
+
+{
+  "name": "karpoff/yii2-crop-image-upload",
+  "description": "Yii 2 Crop image upload widget",
+  "homepage": "https://github.com/karpoff/yii2-crop-image-upload",
+  "license": "BSD-3-Clause",
+  "type": "yii2-extension",
+  "version": "0.0.1",
+  "keywords": [
+	"yii2",
+	"crop image"
+  ],
+  "authors": [
+	{
+	  "name": "Anton Karpov",
+	  "email": "karpoff@bk.ru"
+	}
+  ],
+  "autoload": {
+	"psr-4": {
+	  "karpoff\\icrop\\": ""
+	}
+  },
+  "require": {
+	"yiisoft/yii2": "*",
+    "yiisoft/yii2-imagine": "*",
+    "mongosoft/yii2-upload-behavior": "*"
+  }
+}
