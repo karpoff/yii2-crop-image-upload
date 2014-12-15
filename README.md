@@ -1,6 +1,7 @@
 cropped image upload extension for Yii2
 ======================
 
+[![Latest Stable Version](https://poser.pugx.org/karpoff/yii2-crop-image-upload/v/stable.svg)](https://packagist.org/packages/karpoff/yii2-crop-image-upload) [![Total Downloads](https://poser.pugx.org/karpoff/yii2-crop-image-upload/downloads.svg)](https://packagist.org/packages/karpoff/yii2-crop-image-upload) [![Latest Unstable Version](https://poser.pugx.org/karpoff/yii2-crop-image-upload/v/unstable.svg)](https://packagist.org/packages/karpoff/yii2-crop-image-upload) [![License](https://poser.pugx.org/karpoff/yii2-crop-image-upload/license.svg)](https://packagist.org/packages/karpoff/yii2-crop-image-upload)
 
 This extension automatically uploads image and make crop.
 
