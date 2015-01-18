@@ -27,6 +27,11 @@ class CropImageUploadBehavior extends UploadBehavior
 	public $cropped_field;
 
 	/**
+	 * @var string sets width (in pixels) of cropped image
+	 */
+	public $crop_width;
+
+	/**
 	 * @var string crop ratio (needed width / needed height)
 	 */
 	public $ratio;
@@ -111,7 +116,12 @@ class CropImageUploadBehavior extends UploadBehavior
 			$crop[$ind] = round($crop[$ind]*($ind%2 == 0 ? $size->getWidth() : $size->getHeight())/100);
 		}
 
-		$image->crop(new Point($crop[0], $crop[1]), new Box($crop[2]-$crop[0], $crop[3]-$crop[1]))->save($save_path);
+		$crop_image = $image->crop(new Point($crop[0], $crop[1]), new Box($crop[2]-$crop[0], $crop[3]-$crop[1]));
+
+		if ($this->crop_width)
+			$crop_image = $crop_image->resize(new Box($this->crop_width, $this->crop_width / $this->ratio));
+
+		$crop_image->save($save_path);
 	}
 
 	/**
