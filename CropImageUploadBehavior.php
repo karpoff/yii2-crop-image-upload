@@ -36,6 +36,11 @@ class CropImageUploadBehavior extends UploadBehavior
 	 */
 	public $ratio;
 
+	/**
+	 * @var array the scenarios in which the behavior will be triggered
+	 */
+	public $scenarios = ['default'];
+
 	private $crop_value;
 	private $crop_changed;
 
