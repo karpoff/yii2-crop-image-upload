@@ -193,6 +193,6 @@ class CropImageUploadBehavior extends UploadBehavior
 	 */
 	protected function getCropFileName($filename)
 	{
-		return uniqid().'_'. $filename;
+		return uniqid(rand(0, 9999)).'_'. $filename;
 	}
 }
