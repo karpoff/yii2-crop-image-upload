@@ -37,11 +37,17 @@ class CropImageUploadBehavior extends UploadBehavior
 	 */
 	public $ratio;
 
+	/**
+	 * @var array options used while saving image
+	 * @see http://imagine.readthedocs.org/en/latest/usage/introduction.html#save-images
+	 */
+	public $save_options = [];
+
 
 	/**
 	 * @var Array multiple crops
 	 * array with multiple crop settings. values are
-	 * cropped_field, crop_field, crop_width, ratio
+	 * cropped_field, crop_field, crop_width, ratio, save_options
 	 * @see description of CropImageUploadBehavior fields
 	 */
 	public $crops;
@@ -99,6 +105,8 @@ class CropImageUploadBehavior extends UploadBehavior
 
 		$crops = $model->getAttribute($this->attribute);
 
+		$image_changed = (!$model->getOldAttribute($this->attribute) && $crops['file']) || ($model->getOldAttribute($this->attribute) != $crops['file']);
+
 		$this->getConfigurations();
 		foreach ($this->crops_internal as $ind => &$crop) {
 			$crop['value'] = $crops[$ind];
@@ -108,9 +116,10 @@ class CropImageUploadBehavior extends UploadBehavior
 				$crop['_changed'] = $crops[$ind] != $model->getAttribute($crop['crop_field']);
 				$model->setAttribute($crop['crop_field'], $crops[$ind]);
 			}
+			$crop['_changed'] |= $image_changed;
 		}
 
-		$model->setAttribute($this->attribute, $model->getOldAttribute($this->attribute));
+		$model->setAttribute($this->attribute, $crops['file']);
 
 		parent::beforeValidate();
 	}
@@ -184,7 +193,7 @@ class CropImageUploadBehavior extends UploadBehavior
 		if (!empty($crop['crop_width']))
 			$crop_image = $crop_image->resize(new Box($crop['crop_width'], $crop['crop_width'] / $crop['ratio']));
 
-		$crop_image->save($save_path);
+		$crop_image->save($save_path, isset($crop['save_options']) ? $crop['save_options'] : $this->save_options);
 	}
 
 	/**

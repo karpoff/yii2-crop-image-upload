@@ -92,6 +92,8 @@ class CropImageUpload extends InputWidget
 			$input_name = Html::getInputName($this->model, $this->attribute);
 			$input_id = Html::getInputId($this->model, $this->attribute);
 
+			echo Html::hiddenInput($input_name . '[file]', Html::getAttributeValue($this->model, $this->attribute), ['id' => $input_id . '_image']);
+
 			foreach ($crops as $ind => $crop) {
 				$crop_id = $input_id . '_crop' . $ind;
 				echo Html::hiddenInput($input_name . '[' . $ind . ']', $crop['value'] === false ? '-' : $crop['value'], ['id' => $crop_id]);

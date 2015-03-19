@@ -5,8 +5,9 @@
 		_obj.on('change', function() {
 			var file = this.files[0];
 			var fr = new FileReader();
-			fr.onload = function () {
+			fr.onload = function (readerEvt) {
 				_image_store.html('');
+				$('#' + _obj.attr('id') + '_image').val(Math.random().toString(36).replace(/[^a-z]+/g, '') + '.' + fr.result.split(';')[0].split('/')[1]);
 				$.each(config.crops, function() {
 					make_crops(this, fr.result);
 				});
