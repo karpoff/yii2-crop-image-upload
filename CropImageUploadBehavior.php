@@ -103,23 +103,24 @@ class CropImageUploadBehavior extends UploadBehavior
 		/** @var BaseActiveRecord $model */
 		$model = $this->owner;
 
-		$crops = $model->getAttribute($this->attribute);
+		if (in_array($model->scenario, $this->scenarios) && ($crops = $model->getAttribute($this->attribute))) {
 
-		$image_changed = (!$model->getOldAttribute($this->attribute) && $crops['file']) || ($model->getOldAttribute($this->attribute) != $crops['file']);
+			$image_changed = (!$model->getOldAttribute($this->attribute) && $crops['file']) || ($model->getOldAttribute($this->attribute) != $crops['file']);
 
-		$this->getConfigurations();
-		foreach ($this->crops_internal as $ind => &$crop) {
-			$crop['value'] = $crops[$ind];
-			if (empty($crop['crop_field'])) {
-				$crop['_changed'] = !empty($crops[$ind]);
-			} else {
-				$crop['_changed'] = $crops[$ind] != $model->getAttribute($crop['crop_field']);
-				$model->setAttribute($crop['crop_field'], $crops[$ind]);
+			$this->getConfigurations();
+			foreach ($this->crops_internal as $ind => &$crop) {
+				$crop['value'] = $crops[$ind];
+				if (empty($crop['crop_field'])) {
+					$crop['_changed'] = !empty($crops[$ind]);
+				} else {
+					$crop['_changed'] = $crops[$ind] != $model->getAttribute($crop['crop_field']);
+					$model->setAttribute($crop['crop_field'], $crops[$ind]);
+				}
+				$crop['_changed'] |= $image_changed;
 			}
-			$crop['_changed'] |= $image_changed;
-		}
 
-		$model->setAttribute($this->attribute, $crops['file']);
+			$model->setAttribute($this->attribute, $crops['file']);
+		}
 
 		parent::beforeValidate();
 	}
@@ -134,15 +135,18 @@ class CropImageUploadBehavior extends UploadBehavior
 		/** @var BaseActiveRecord $model */
 		$model = $this->owner;
 
-		$original = $model->getAttribute($this->attribute);
-		if (!$original)
-			$original = $model->getOldAttribute($this->attribute);
+		if (in_array($model->scenario, $this->scenarios)) {
 
-		foreach ($this->getConfigurations() as $crop) {
-			if ($crop['_changed'] && !empty($crop['cropped_field'])) {
-				$this->delete($crop['cropped_field'], true);
-				if (!empty($crop['cropped_field']))
-					$model->setAttribute($crop['cropped_field'], $this->getCropFileName($original));
+			$original = $model->getAttribute($this->attribute);
+			if (!$original)
+				$original = $model->getOldAttribute($this->attribute);
+
+			foreach ($this->getConfigurations() as $crop) {
+				if (isset($crop['_changed']) && $crop['_changed'] && !empty($crop['cropped_field'])) {
+					$this->delete($crop['cropped_field'], true);
+					if (!empty($crop['cropped_field']))
+						$model->setAttribute($crop['cropped_field'], $this->getCropFileName($original));
+				}
 			}
 		}
 	}
@@ -153,17 +157,19 @@ class CropImageUploadBehavior extends UploadBehavior
 	{
 		parent::afterSave();
 
-		$image = null;
+		if (in_array($this->owner->scenario, $this->scenarios)) {
+			$image = null;
 
-		foreach ($this->getConfigurations() as $crop) {
-			if ($crop['_changed']) {
-				if (!$image) {
-					$path = $this->getUploadPath($this->attribute);
-					if (!$path)
-						$path = $this->getUploadPath($this->attribute, true);
-					$image = Image::getImagine()->open($path);
+			foreach ($this->getConfigurations() as $crop) {
+				if ($crop['_changed']) {
+					if (!$image) {
+						$path = $this->getUploadPath($this->attribute);
+						if (!$path)
+							$path = $this->getUploadPath($this->attribute, true);
+						$image = Image::getImagine()->open($path);
+					}
+					$this->createCrop($crop, $image->copy());
 				}
-				$this->createCrop($crop, $image->copy());
 			}
 		}
 	}
