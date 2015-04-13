@@ -32,6 +32,8 @@ Usage
 Attach the behavior in your model:
 
 ```php
+use karpoff\icrop\CropImageUploadBehavior;
+
 class Document extends ActiveRecord
 {
     /**
@@ -68,6 +70,8 @@ class Document extends ActiveRecord
 Example view file:
 
 ```php
+<?php use karpoff\icrop\CropImageUpload; ?>
+
 <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <?= $form->field($model, 'photo')->widget(CropImageUpload::className()) ?>
     <div class="form-group">
