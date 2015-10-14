@@ -103,23 +103,32 @@ class CropImageUploadBehavior extends UploadBehavior
 		/** @var BaseActiveRecord $model */
 		$model = $this->owner;
 
-		if (in_array($model->scenario, $this->scenarios) && ($crops = $model->getAttribute($this->attribute))) {
+		if (in_array($model->scenario, $this->scenarios) && ($crops = $model->getAttribute($this->attribute)) && is_array($crops)) {
 
 			$image_changed = (!$model->getOldAttribute($this->attribute) && $crops['file']) || ($model->getOldAttribute($this->attribute) != $crops['file']);
 
 			$this->getConfigurations();
 			foreach ($this->crops_internal as $ind => &$crop) {
 				$crop['value'] = $crops[$ind];
+				if ($crops[$ind] == '-')
+					$crops[$ind] = '';
 				if (empty($crop['crop_field'])) {
 					$crop['_changed'] = !empty($crops[$ind]);
 				} else {
 					$crop['_changed'] = $crops[$ind] != $model->getAttribute($crop['crop_field']);
 					$model->setAttribute($crop['crop_field'], $crops[$ind]);
 				}
-				$crop['_changed'] |= $image_changed;
+				if ($image_changed)
+					$crop['_changed'] = true;
+				else if ($model->getOldAttribute($this->attribute) == null)
+					$crop['_changed'] = false;
 			}
 
 			$model->setAttribute($this->attribute, $crops['file']);
+
+			if (!is_writable(\Yii::getAlias($this->resolvePath($this->path)))) {
+				$model->addError($this->attribute, 'image path is not writable ');
+			}
 		}
 
 		parent::beforeValidate();
@@ -161,7 +170,7 @@ class CropImageUploadBehavior extends UploadBehavior
 			$image = null;
 
 			foreach ($this->getConfigurations() as $crop) {
-				if ($crop['_changed']) {
+				if (isset($crop['_changed']) && $crop['_changed']) {
 					if (!$image) {
 						$path = $this->getUploadPath($this->attribute);
 						if (!$path)
