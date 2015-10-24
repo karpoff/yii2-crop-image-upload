@@ -126,8 +126,17 @@ class CropImageUploadBehavior extends UploadBehavior
 
 			$model->setAttribute($this->attribute, $crops['file']);
 
-			if (!is_writable(\Yii::getAlias($this->resolvePath($this->path)))) {
-				$model->addError($this->attribute, 'image path is not writable ');
+			$path = $this->resolvePath($this->path);
+			if (!is_writable(\Yii::getAlias($path))) {
+				$cp = [];
+				foreach (explode('/', $path) as $p) {
+					if (preg_match('/{([^}]+)}/', $p))
+						break;
+					$cp[] = $p;
+				}
+				if (!is_writable(\Yii::getAlias(implode('/', $cp)))) {
+					$model->addError($this->attribute, 'image path is not writable ' . \Yii::getAlias($this->resolvePath($this->path)));
+				}
 			}
 		}
 
