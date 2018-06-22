@@ -20,6 +20,6 @@
   "require": {
 	"yiisoft/yii2": "*",
     "yiisoft/yii2-imagine": "*",
-    "mongosoft/yii2-upload-behavior": "*"
+    "mohorev/yii2-upload-behavior": "*"
   }
 }
