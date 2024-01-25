@@ -4,7 +4,7 @@
   "homepage": "https://github.com/karpoff/yii2-crop-image-upload",
   "license": "BSD-3-Clause",
   "type": "yii2-extension",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "keywords": ["yii2", "crop", "image", "upload"],
   "authors": [
 	{
